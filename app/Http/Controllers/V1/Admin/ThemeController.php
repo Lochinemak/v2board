@@ -15,7 +15,7 @@ class ThemeController extends Controller
 
     public function __construct()
     {
-        $this->path = $path = public_path('theme/');
+        $this->path = $path = public_path('templates/');
         $this->themes = array_map(function ($item) use ($path) {
             return str_replace($path, '', $item);
         }, glob($path . '*'));
@@ -30,14 +30,14 @@ class ThemeController extends Controller
             $themeConfig = json_decode(File::get($themeConfigFile), true);
             if (!isset($themeConfig['configs']) || !is_array($themeConfig)) continue;
             $themeConfigs[$theme] = $themeConfig;
-            if (config("theme.{$theme}")) continue;
+            if (config("templates.{$theme}")) continue;
             $themeService = new ThemeService($theme);
             $themeService->init();
         }
         return response([
             'data' => [
                 'themes' => $themeConfigs,
-                'active' => config('v2board.frontend_theme', 'v2board')
+                'active' => config('v2board.frontend_theme', 'standard')
             ]
         ]);
     }
@@ -60,7 +60,7 @@ class ThemeController extends Controller
         ]);
         $payload['config'] = json_decode(base64_decode($payload['config']), true);
         if (!$payload['config'] || !is_array($payload['config'])) abort(500, '参数有误');
-        $themeConfigFile = public_path("theme/{$payload['name']}/config.json");
+        $themeConfigFile = public_path("templates/{$payload['name']}/config.json");
         if (!File::exists($themeConfigFile)) abort(500, '主题不存在');
         $themeConfig = json_decode(File::get($themeConfigFile), true);
         if (!isset($themeConfig['configs']) || !is_array($themeConfig)) abort(500, '主题配置文件有误');
@@ -70,10 +70,10 @@ class ThemeController extends Controller
             $config[$validateField] = isset($payload['config'][$validateField]) ? $payload['config'][$validateField] : '';
         }
 
-        File::ensureDirectoryExists(base_path() . '/config/theme/');
+        File::ensureDirectoryExists(base_path() . '/config/templates/');
 
         $data = var_export($config, 1);
-        if (!File::put(base_path() . "/config/theme/{$payload['name']}.php", "<?php\n return $data ;")) {
+        if (!File::put(base_path() . "/config/templates/{$payload['name']}.php", "<?php\n return $data ;")) {
             abort(500, '修改失败');
         }
 

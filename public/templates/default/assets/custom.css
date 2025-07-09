@@ -1,0 +1,232 @@
+/* OAuth登录按钮样式 - 使用admin风格 */
+.oauth-login-container {
+    margin-top: 24px;
+    padding-top: 0;
+    width: 100%;
+}
+
+/* 更高优先级的样式，防止被V2Board覆盖 */
+.custom-oauth-wrapper .oauth-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 10px 16px !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 6px !important;
+    background: #ffffff !important;
+    color: #595959 !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 40px !important;
+    line-height: normal !important;
+}
+
+/* 确保OAuth容器完全独立，不受任何父元素影响 */
+.oauth-login-container {
+    position: relative !important;
+    z-index: 1000 !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 24px 0 0 0 !important;
+    display: block !important;
+    width: 100% !important;
+    clear: both !important;
+}
+
+/* 防止OAuth容器被插入到按钮内部时的样式修复 */
+button .oauth-login-container,
+.btn .oauth-login-container,
+.btn-primary .oauth-login-container,
+i .oauth-login-container,
+span .oauth-login-container {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999 !important;
+    background: white !important;
+    border: 2px solid #f39c12 !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+    width: 300px !important;
+    max-width: 90vw !important;
+}
+
+/* OAuth按钮样式重置 */
+.oauth-login-container .oauth-btn,
+.oauth-login-container a.oauth-btn,
+.oauth-login-container button.oauth-btn {
+    all: unset !important;
+    box-sizing: border-box !important;
+    position: static !important;
+}
+
+.oauth-login-title {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+.oauth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.oauth-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px;
+    padding: 10px 16px !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 6px !important;
+    background: #ffffff !important;
+    color: #595959 !important;
+    text-decoration: none !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-height: 40px !important;
+    line-height: normal !important;
+}
+
+.oauth-btn:hover,
+.custom-oauth-wrapper .oauth-btn:hover {
+    background: #fafafa !important;
+    border-color: #40a9ff !important;
+    text-decoration: none !important;
+    color: #40a9ff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    cursor: pointer;
+}
+
+.oauth-btn-linuxdo,
+.custom-oauth-wrapper .oauth-btn-linuxdo {
+    border-color: #f39c12 !important;
+    color: #f39c12 !important;
+}
+
+.oauth-btn-linuxdo:hover,
+.custom-oauth-wrapper .oauth-btn-linuxdo:hover {
+    background: #fff7e6 !important;
+    color: #d48806 !important;
+    border-color: #d48806 !important;
+}
+
+/* SVG图标样式 */
+.oauth-btn .oauth-icon {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0 !important;
+    opacity: 0.8;
+}
+
+.oauth-btn:hover .oauth-icon {
+    opacity: 1;
+}
+
+/* Font Awesome图标样式 */
+.oauth-btn i {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.oauth-btn:hover i {
+    opacity: 1;
+}
+
+/* 按钮文字样式 */
+.oauth-btn span,
+.custom-oauth-wrapper .oauth-btn span {
+    font-weight: 400 !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .oauth-btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+        min-height: 36px !important;
+    }
+
+    .oauth-btn .oauth-icon {
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    .oauth-btn i {
+        font-size: 14px !important;
+    }
+
+    .oauth-divider {
+        margin: 12px 0 16px 0;
+    }
+
+    .oauth-divider span {
+        padding: 0 12px;
+        font-size: 11px;
+    }
+}
+
+/* 登录表单容器样式调整 */
+.ant-form {
+    position: relative;
+}
+
+/* 确保OAuth按钮在登录表单下方 */
+.oauth-login-container {
+    margin-top: 24px;
+}
+
+/* 分割线样式 */
+.oauth-divider {
+    display: flex;
+    align-items: center;
+    margin: 16px 0 20px 0;
+    color: #8c8c8c;
+    font-size: 12px;
+}
+
+.oauth-divider::before,
+.oauth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #f0f0f0;
+}
+
+.oauth-divider span {
+    padding: 0 16px;
+    background: white;
+    white-space: nowrap;
+}
+
+/* 登录按钮样式优化 */
+.btn-primary,
+button[type="submit"],
+.btn {
+    cursor: pointer !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .oauth-btn {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+        min-height: 44px !important;
+        gap: 10px;
+    }
+}

@@ -20,11 +20,11 @@ class Client
     {
         $token = $request->input('token');
         if (empty($token)) {
-            abort(403, 'token is null');
+            abort(403, 'Access denied');
         }
         $user = User::where('token', $token)->first();
         if (!$user) {
-            abort(403, 'token is error');
+            abort(403, 'Access denied');
         }
         $request->merge([
             'user' => $user

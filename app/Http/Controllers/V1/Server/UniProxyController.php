@@ -18,27 +18,37 @@ class UniProxyController extends Controller
     private $nodeId;
     private $serverService;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
-        $token = $request->input('token');
-        if (empty($token)) {
-            abort(500, 'token is null');
-        }
-        if ($token !== config('v2board.server_token')) {
-            abort(500, 'token is error');
-        }
-        $this->nodeType = $request->input('node_type');
-        if ($this->nodeType === 'v2ray') $this->nodeType = 'vmess';
-        if ($this->nodeType === 'hysteria2') $this->nodeType = 'hysteria';
-        $this->nodeId = $request->input('node_id');
         $this->serverService = new ServerService();
+    }
+
+    /**
+     * 初始化节点信息（从中间件获取认证后的参数）
+     */
+    private function initializeNode(Request $request)
+    {
+        $this->nodeType = $request->input('node_type');
+        $this->nodeId = $request->input('node_id');
         $this->nodeInfo = $this->serverService->getServer($this->nodeId, $this->nodeType);
-        if (!$this->nodeInfo) abort(500, 'server is not exist');
+
+        if (!$this->nodeInfo) {
+            return response()->json([
+                'error' => 'Node not found',
+                'code' => 404
+            ], 404);
+        }
+
+        return null; // 成功时返回null
     }
 
     // 后端获取用户
     public function user(Request $request)
     {
+        // 初始化节点信息
+        $error = $this->initializeNode($request);
+        if ($error) return $error;
+
         ini_set('memory_limit', -1);
         Cache::put(CacheKey::get('SERVER_' . strtoupper($this->nodeType) . '_LAST_CHECK_AT', $this->nodeInfo->id), time(), 3600);
         $users = $this->serverService->getAvailableUsers($this->nodeInfo->group_id)

@@ -175,6 +175,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\HorizonServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\SocialiteServiceProvider::class,
 
     ],
 
@@ -231,11 +232,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | V2board version
+    | Application version
     |--------------------------------------------------------------------------
     |
-    | The only modification by laravel config
+    | Application version information
     |
     */
-    'version' => '1.7.5.2685.1112'
+    'version' => '2.1.0'
 ];

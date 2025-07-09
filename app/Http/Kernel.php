@@ -15,6 +15,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+        \App\Http\Middleware\SuppressDeprecationWarnings::class,
+        \App\Http\Middleware\HideServerInfo::class,
         \App\Http\Middleware\CORS::class,
         \App\Http\Middleware\UAfilter::class,
         \App\Http\Middleware\TrustProxies::class,
@@ -31,6 +33,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
+            \App\Http\Middleware\AntiScan::class,
 //            \App\Http\Middleware\EncryptCookies::class,
 //            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 //            \Illuminate\Session\Middleware\StartSession::class,
@@ -44,7 +47,16 @@ class Kernel extends HttpKernel
 //            \App\Http\Middleware\EncryptCookies::class,
 //            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 //            \Illuminate\Session\Middleware\StartSession::class,
+            \App\Http\Middleware\AntiFingerprint::class,
             \App\Http\Middleware\ForceJson::class,
+            \App\Http\Middleware\Language::class,
+            'bindings',
+        ],
+
+        'oauth' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
             \App\Http\Middleware\Language::class,
             'bindings',
         ],
@@ -71,6 +83,7 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\Admin::class,
         'client' => \App\Http\Middleware\Client::class,
         'staff' => \App\Http\Middleware\Staff::class,
+        'server' => \App\Http\Middleware\ServerAuth::class,
         'log' => \App\Http\Middleware\RequestLog::class
     ];
 

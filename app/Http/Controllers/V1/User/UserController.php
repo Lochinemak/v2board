@@ -66,6 +66,24 @@ class UserController extends Controller
         if (!$user) {
             abort(500, __('The user does not exist'));
         }
+
+        // 检查是否是OAuth用户且没有设置过密码
+        if ($user->is_oauth_user && $request->input('old_password') === 'OAUTH_USER_FIRST_PASSWORD_SETUP') {
+            // OAuth用户首次设置密码，不需要验证旧密码
+            $user->password = password_hash($request->input('new_password'), PASSWORD_DEFAULT);
+            $user->password_algo = NULL;
+            $user->password_salt = NULL;
+            if (!$user->save()) {
+                abort(500, __('Save failed'));
+            }
+            $authService = new AuthService($user);
+            $authService->removeAllSession();
+            return response([
+                'data' => true
+            ]);
+        }
+
+        // 普通用户或OAuth用户修改密码，需要验证旧密码
         if (!Helper::multiPasswordVerify(
             $user->password_algo,
             $user->password_salt,
@@ -215,13 +233,23 @@ class UserController extends Controller
                 'discount',
                 'commission_rate',
                 'telegram_id',
-                'uuid'
+                'uuid',
+                'is_oauth_user',
+                'oauth_provider',
+                'oauth_name',
+                'oauth_avatar'
             ])
             ->first();
         if (!$user) {
             abort(500, __('The user does not exist'));
         }
         $user['avatar_url'] = 'https://cravatar.cn/avatar/' . md5($user->email) . '?s=64&d=identicon';
+
+        // 如果是OAuth用户且有头像，使用OAuth头像
+        if ($user->is_oauth_user && $user->oauth_avatar) {
+            $user['avatar_url'] = $user->oauth_avatar;
+        }
+
         return response([
             'data' => $user
         ]);

@@ -17,6 +17,18 @@ class PassportRoute
             $router->post('/auth/forget', 'V1\\Passport\\AuthController@forget');
             $router->post('/auth/getQuickLoginUrl', 'V1\\Passport\\AuthController@getQuickLoginUrl');
             $router->post('/auth/loginWithMailLink', 'V1\\Passport\\AuthController@loginWithMailLink');
+
+            // OAuth routes - 需要session支持
+            $router->group(['middleware' => ['oauth']], function ($router) {
+                $router->get('/oauth/providers', 'V1\\Passport\\OAuthController@getProviders');
+                $router->get('/oauth/{provider}/redirect', 'V1\\Passport\\OAuthController@redirect');
+                $router->get('/oauth/{provider}/callback', 'V1\\Passport\\OAuthController@callback');
+
+                // Specific Linux.do OAuth routes for better clarity
+                $router->get('/oauth/linuxdo/redirect', 'V1\\Passport\\OAuthController@redirect')->defaults('provider', 'linuxdo');
+                $router->get('/oauth/linuxdo/callback', 'V1\\Passport\\OAuthController@callback')->defaults('provider', 'linuxdo');
+            });
+
             // Comm
             $router->post('/comm/sendEmailVerify', 'V1\\Passport\\CommController@sendEmailVerify');
             $router->post('/comm/pv', 'V1\\Passport\\CommController@pv');

@@ -14,40 +14,29 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function (Request $request) {
-    if (config('v2board.app_url') && config('v2board.safe_mode_enable', 0)) {
-        if ($request->server('HTTP_HOST') !== parse_url(config('v2board.app_url'))['host']) {
-            abort(403);
-        }
-    }
-    $renderParams = [
-        'title' => config('v2board.app_name', 'V2Board'),
-        'theme' => config('v2board.frontend_theme', 'default'),
-        'version' => config('app.version'),
-        'description' => config('v2board.app_description', 'V2Board is best'),
-        'logo' => config('v2board.logo')
-    ];
+Route::get('/', 'FakeHomeController@index');
 
-    if (!config("theme.{$renderParams['theme']}")) {
-        $themeService = new ThemeService($renderParams['theme']);
-        $themeService->init();
-    }
+// 兼容旧的assets路径，重定向到新路径
+Route::get('/assets/admin/{path}', function($path) {
+    return redirect('/static/panel/' . $path, 301);
+})->where('path', '.*');
 
-    $renderParams['theme_config'] = config('theme.' . config('v2board.frontend_theme', 'default'));
-    return view('theme::' . config('v2board.frontend_theme', 'default') . '.dashboard', $renderParams);
-});
+// 兼容旧的theme路径
+Route::get('/theme/{path}', function($path) {
+    return redirect('/templates/' . $path, 301);
+})->where('path', '.*');
 
 //TODO:: 兼容
-Route::get('/' . config('v2board.secure_path', config('v2board.frontend_admin_path', hash('crc32b', config('app.key')))), function () {
+Route::get('/' . \App\Utils\AdminPathGenerator::getCurrentPath(), function () {
     return view('admin', [
-        'title' => config('v2board.app_name', 'V2Board'),
+        'title' => config('v2board.app_name', 'CloudPanel'),
         'theme_sidebar' => config('v2board.frontend_theme_sidebar', 'light'),
         'theme_header' => config('v2board.frontend_theme_header', 'dark'),
         'theme_color' => config('v2board.frontend_theme_color', 'default'),
         'background_url' => config('v2board.frontend_background_url'),
         'version' => config('app.version'),
         'logo' => config('v2board.logo'),
-        'secure_path' => config('v2board.secure_path', config('v2board.frontend_admin_path', hash('crc32b', config('app.key'))))
+        'secure_path' => \App\Utils\AdminPathGenerator::getCurrentPath()
     ]);
 });
 

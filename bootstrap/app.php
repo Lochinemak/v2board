@@ -2,6 +2,28 @@
 
 /*
 |--------------------------------------------------------------------------
+| Suppress PHP Deprecation Warnings
+|--------------------------------------------------------------------------
+|
+| Suppress deprecation warnings for PHP 8.4 compatibility with Laravel 8
+| This prevents warnings from being output to HTTP responses
+|
+*/
+
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
+// 设置自定义错误处理器来完全抑制弃用警告
+set_error_handler(function ($severity, $message, $file, $line) {
+    // 完全忽略弃用警告
+    if ($severity === E_DEPRECATED || $severity === E_USER_DEPRECATED) {
+        return true;
+    }
+    // 其他错误使用默认处理
+    return false;
+});
+
+/*
+|--------------------------------------------------------------------------
 | Create The Application
 |--------------------------------------------------------------------------
 |

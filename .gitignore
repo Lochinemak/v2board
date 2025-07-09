@@ -24,3 +24,15 @@ docker-compose.yml
 public/clients/*
 workerman.webman.php.pid
 workerman.log
+
+# Additional security files that should not be committed
+*.pid
+storage/logs/*.log
+/test_*.php
+/test_*.html
+/oauth-test.html
+/public_backup/
+*.sql
+database/*.sql
+!database/install.sql
+!database/update.sql
