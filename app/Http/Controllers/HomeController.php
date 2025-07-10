@@ -26,12 +26,12 @@ class HomeController extends Controller
             'logo' => config('v2board.logo')
         ];
 
-        if (!config("theme.{$renderParams['theme']}")) {
+        if (!config("templates.{$renderParams['theme']}")) {
             $themeService = new ThemeService($renderParams['theme']);
             $themeService->init();
         }
 
-        $renderParams['theme_config'] = config('theme.' . config('v2board.frontend_theme', 'default'));
+        $renderParams['theme_config'] = config('templates.' . config('v2board.frontend_theme', 'default'));
         return view('theme::' . config('v2board.frontend_theme', 'default') . '.dashboard', $renderParams);
     }
 }
