@@ -89,7 +89,7 @@ class OAuthService
     private function updateOAuthUser(User $user, array $oauthUserData)
     {
         // Update OAuth-related fields
-        $user->oauth_name = $oauthUserData['name'] ?? $oauthUserData['nickname'] ?? $user->oauth_name;
+        $user->oauth_name = $oauthUserData['nickname'] ?? $oauthUserData['name'] ?? $user->oauth_name;
         $user->oauth_avatar = $oauthUserData['avatar'] ?? $user->oauth_avatar;
         
         // Update email if provided and different

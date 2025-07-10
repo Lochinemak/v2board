@@ -101,6 +101,17 @@ class UserController extends Controller
             $res[$i]['alive_ip'] = $countalive;
             $res[$i]['ips'] = implode(', ', $ips);
             $res[$i]['subscribe_url'] = Helper::getSubscribeUrl($res[$i]['token']);
+
+            // 添加用户头像信息
+            $res[$i]['avatar_url'] = 'https://cravatar.cn/avatar/' . md5($res[$i]['email']) . '?s=64&d=identicon';
+
+            // 如果是OAuth用户且有头像，使用OAuth头像
+            if ($res[$i]['is_oauth_user'] && $res[$i]['oauth_avatar']) {
+                $res[$i]['avatar_url'] = $res[$i]['oauth_avatar'];
+            }
+
+            // 添加显示名称，优先使用OAuth名称
+            $res[$i]['display_name'] = $res[$i]['oauth_name'] ?: $res[$i]['email'];
         }
         return response([
             'data' => $res,

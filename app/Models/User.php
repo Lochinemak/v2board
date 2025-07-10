@@ -42,7 +42,7 @@ class User extends Model
         $user->email = $userData['email'] ?? '';
         $user->oauth_provider = $provider;
         $user->oauth_provider_id = $userData['id'];
-        $user->oauth_name = $userData['name'] ?? $userData['nickname'] ?? '';
+        $user->oauth_name = $userData['nickname'] ?? $userData['name'] ?? '';
         $user->oauth_avatar = $userData['avatar'] ?? '';
         $user->is_oauth_user = true;
         $user->uuid = \App\Utils\Helper::guid(true);
@@ -74,7 +74,7 @@ class User extends Model
     {
         $this->oauth_provider = $provider;
         $this->oauth_provider_id = $userData['id'];
-        $this->oauth_name = $userData['name'] ?? $userData['nickname'] ?? '';
+        $this->oauth_name = $userData['nickname'] ?? $userData['name'] ?? '';
         $this->oauth_avatar = $userData['avatar'] ?? '';
     }
 }

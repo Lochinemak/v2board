@@ -72,10 +72,10 @@ class LinuxDoProvider extends AbstractProvider implements ProviderInterface
         return (new User)->setRaw($user)->map([
             'id' => $user['id'],
             'nickname' => $user['username'] ?? null,
-            'name' => $user['name'] ?? $user['username'] ?? null,
+            'name' => $user['username'] ?? $user['name'] ?? null,
             'email' => $user['email'] ?? null,
-            'avatar' => isset($user['avatar_template']) 
-                ? 'https://connect.linux.do' . str_replace('{size}', '120', $user['avatar_template'])
+            'avatar' => isset($user['avatar_template'])
+                ? str_replace('{size}', '120', $user['avatar_template'])
                 : null,
         ]);
     }
