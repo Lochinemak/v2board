@@ -57,7 +57,7 @@ return [
     'linuxdo' => [
         'client_id' => env('LINUXDO_CLIENT_ID'),
         'client_secret' => env('LINUXDO_CLIENT_SECRET'),
-        'redirect' => env('APP_URL', 'http://localhost') . '/api/v1/passport/oauth/linuxdo/callback',
+        'redirect' => 'https://pt.kktwo.me/api/v1/passport/oauth/linuxdo/callback',
     ],
 
     // 通用OAuth配置 - 你可以根据实际的第三方服务修改这个配置

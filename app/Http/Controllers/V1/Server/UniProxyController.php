@@ -185,6 +185,10 @@ class UniProxyController extends Controller
     // 后端获取配置
     public function config(Request $request)
     {
+        // 初始化节点信息
+        $error = $this->initializeNode($request);
+        if ($error) return $error;
+
         switch ($this->nodeType) {
             case 'shadowsocks':
                 $response = [

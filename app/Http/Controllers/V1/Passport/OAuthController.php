@@ -120,11 +120,20 @@ class OAuthController extends Controller
                     $redirectUrl = '/?access=' . $accessKey . '#/login?verify=' . $code . '&redirect=' . $redirectTarget;
                 }
 
-                // Use app_url if configured
+                // Build clean URL without preserving current query parameters
                 if (config('v2board.app_url')) {
                     $fullUrl = config('v2board.app_url') . $redirectUrl;
                 } else {
-                    $fullUrl = url($redirectUrl);
+                    $scheme = $request->isSecure() ? 'https' : 'http';
+                    $host = $request->getHost();
+                    $port = $request->getPort();
+
+                    $baseUrl = $scheme . '://' . $host;
+                    if (($scheme === 'http' && $port !== 80) || ($scheme === 'https' && $port !== 443)) {
+                        $baseUrl .= ':' . $port;
+                    }
+
+                    $fullUrl = $baseUrl . $redirectUrl;
                 }
 
                 return redirect($fullUrl);
@@ -164,11 +173,20 @@ class OAuthController extends Controller
             $redirectUrl = '/?access=' . $accessKey . '#/login?oauth_error=' . urlencode($message);
         }
 
-        // Use app_url if configured
+        // Build clean URL without preserving current query parameters
         if (config('v2board.app_url')) {
             $fullUrl = config('v2board.app_url') . $redirectUrl;
         } else {
-            $fullUrl = url($redirectUrl);
+            $scheme = request()->isSecure() ? 'https' : 'http';
+            $host = request()->getHost();
+            $port = request()->getPort();
+
+            $baseUrl = $scheme . '://' . $host;
+            if (($scheme === 'http' && $port !== 80) || ($scheme === 'https' && $port !== 443)) {
+                $baseUrl .= ':' . $port;
+            }
+
+            $fullUrl = $baseUrl . $redirectUrl;
         }
 
         return redirect($fullUrl);
