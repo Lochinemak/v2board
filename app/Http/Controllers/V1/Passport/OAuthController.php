@@ -115,7 +115,9 @@ class OAuthController extends Controller
                     }
                 } else {
                     // Follow V2Board's standard auth flow pattern for regular users
-                    $redirectUrl = '/#/login?verify=' . $code . '&redirect=' . $redirectTarget;
+                    // Add access parameter for anti-fingerprinting
+                    $accessKey = substr(md5(config('app.key')), 0, 8);
+                    $redirectUrl = '/?access=' . $accessKey . '#/login?verify=' . $code . '&redirect=' . $redirectTarget;
                 }
 
                 // Use app_url if configured
@@ -157,7 +159,9 @@ class OAuthController extends Controller
             $redirectUrl = '/' . $securePath . '#/login?oauth_error=' . urlencode($message);
         } else {
             // Redirect to regular login with error
-            $redirectUrl = '/#/login?oauth_error=' . urlencode($message);
+            // Add access parameter for anti-fingerprinting
+            $accessKey = substr(md5(config('app.key')), 0, 8);
+            $redirectUrl = '/?access=' . $accessKey . '#/login?oauth_error=' . urlencode($message);
         }
 
         // Use app_url if configured
