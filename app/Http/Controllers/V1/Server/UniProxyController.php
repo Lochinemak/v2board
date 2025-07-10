@@ -79,6 +79,10 @@ class UniProxyController extends Controller
     // 后端提交数据
     public function push(Request $request)
     {
+        // 初始化节点信息
+        $error = $this->initializeNode($request);
+        if ($error) return $error;
+
         $data = $request->json()->all();
         if (empty($data)) {
             $data = $_POST;
@@ -133,6 +137,10 @@ class UniProxyController extends Controller
     // 后端提交在线数据
     public function alive(Request $request)
     {
+        // 初始化节点信息
+        $error = $this->initializeNode($request);
+        if ($error) return $error;
+
         $data = $request->json()->all();
         if (empty($data)) {
             $data = $_POST;

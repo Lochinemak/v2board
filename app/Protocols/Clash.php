@@ -60,6 +60,10 @@ class Clash
                 array_push($proxy, self::buildTrojan($user['uuid'], $item));
                 array_push($proxies, $item['name']);
             }
+            if ($item['type'] === 'anytls') {
+                array_push($proxy, self::buildAnyTLS($user['uuid'], $item));
+                array_push($proxies, $item['name']);
+            }
             //if ($item['type'] === 'hysteria') {
             //    array_push($proxy, self::buildHysteria($user['uuid'], $item));
             //    array_push($proxies, $item['name']);
@@ -311,6 +315,30 @@ class Clash
             $array['protocol'] = 'udp';
         }
 
+        return $array;
+    }
+
+    public static function buildAnyTLS($password, $server)
+    {
+        $array = [
+            'name' => $server['name'],
+            'type' => 'anytls',
+            'server' => $server['host'],
+            'port' => $server['port'],
+            'password' => $password,
+            'client-fingerprint' => 'chrome',
+            'udp' => true,
+            'alpn' => [
+                'h2',
+                'http/1.1',
+            ],
+        ];
+        if (isset($server['server_name'])) {
+            $array['sni'] = $server['server_name'];
+        }
+        if ($server['insecure']) {
+            $array['skip-cert-verify'] = true;
+        }
         return $array;
     }
 
