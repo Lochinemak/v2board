@@ -43,6 +43,7 @@
 <script src="/static/panel/components.async.js?v={{$version}}"></script>
 <script src="/static/panel/umi.js?v={{$version}}"></script>
 <script src="/static/panel/oauth-admin.js?v={{$version}}"></script>
+<script src="/static/panel/user-avatar.js?v={{$version}}"></script>
 </body>
 
 </html>
