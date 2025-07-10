@@ -14,22 +14,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', 'FakeHomeController@index');
+Route::get('/', 'HomeController@index');
 
-// 兼容旧的assets路径，重定向到新路径
-Route::get('/assets/admin/{path}', function($path) {
-    return redirect('/static/panel/' . $path, 301);
-})->where('path', '.*');
-
-// 兼容旧的theme路径
-Route::get('/theme/{path}', function($path) {
-    return redirect('/templates/' . $path, 301);
-})->where('path', '.*');
-
-//TODO:: 兼容
+// 管理后台路由
 Route::get('/' . \App\Utils\AdminPathGenerator::getCurrentPath(), function () {
     return view('admin', [
-        'title' => config('v2board.app_name', 'CloudPanel'),
+        'title' => config('v2board.app_name', 'V2Board'),
         'theme_sidebar' => config('v2board.frontend_theme_sidebar', 'light'),
         'theme_header' => config('v2board.frontend_theme_header', 'dark'),
         'theme_color' => config('v2board.frontend_theme_color', 'default'),
