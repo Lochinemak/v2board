@@ -44,10 +44,24 @@ class V2boardStatistics extends Command
     {
         $startAt = microtime(true);
         ini_set('memory_limit', -1);
-        //$this->statUser();
-        //$this->statServer();
+
+        $this->info('开始执行统计任务...');
+
+        // 执行用户统计
+        $this->info('执行用户流量统计...');
+        $this->statUser();
+
+        // 执行服务器统计
+        $this->info('执行服务器流量统计...');
+        $this->statServer();
+
+        // 执行总体统计
+        $this->info('执行总体统计...');
         $this->stat();
-        info('统计任务执行完毕。耗时:' . (microtime(true) - $startAt) / 1000);
+
+        $executionTime = (microtime(true) - $startAt);
+        $this->info('统计任务执行完毕。耗时: ' . round($executionTime, 2) . ' 秒');
+        info('统计任务执行完毕。耗时:' . $executionTime);
     }
 
     private function statServer()
@@ -88,12 +102,19 @@ class V2boardStatistics extends Command
             DB::beginTransaction();
             $createdAt = time();
             $recordAt = strtotime('-1 day', strtotime(date('Y-m-d')));
+
+            $this->info('统计时间范围: ' . date('Y-m-d H:i:s', $recordAt) . ' 到 ' . date('Y-m-d H:i:s', strtotime(date('Y-m-d'))));
+
             $statService = new StatisticalService();
             $statService->setStartAt($recordAt);
             $statService->setUserStats();
             $stats = $statService->getStatUser();
+
+            $this->info('获取到 ' . count($stats) . ' 条用户统计数据');
+
+            $insertedCount = 0;
             foreach ($stats as $stat) {
-                if (!StatUser::insert([
+                if (StatUser::insert([
                     'user_id' => $stat['user_id'],
                     'u' => $stat['u'],
                     'd' => $stat['d'],
@@ -103,15 +124,36 @@ class V2boardStatistics extends Command
                     'record_type' => 'd',
                     'record_at' => $recordAt
                 ])) {
-                    throw new \Exception('stat user fail');
+                    $insertedCount++;
+                    $this->info('用户 ' . $stat['user_id'] . ': 上传 ' . $this->formatBytes($stat['u']) . ', 下载 ' . $this->formatBytes($stat['d']) . ', 倍率 ' . $stat['server_rate']);
+                } else {
+                    throw new \Exception('stat user fail for user ' . $stat['user_id']);
                 }
             }
+
             DB::commit();
+            $this->info('成功插入 ' . $insertedCount . ' 条用户统计记录');
             $statService->clearStatUser();
         } catch (\Exception $e) {
             DB::rollback();
+            $this->error('用户统计失败: ' . $e->getMessage());
             \Log::error($e->getMessage(), ['exception' => $e]);
         }
+    }
+
+    /**
+     * 格式化字节数
+     */
+    private function formatBytes($bytes)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, 2) . ' ' . $units[$pow];
     }
 
     private function stat()

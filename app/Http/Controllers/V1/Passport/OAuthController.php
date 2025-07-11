@@ -115,9 +115,8 @@ class OAuthController extends Controller
                     }
                 } else {
                     // Follow V2Board's standard auth flow pattern for regular users
-                    // Add access parameter for anti-fingerprinting
-                    $accessKey = substr(md5(config('app.key')), 0, 8);
-                    $redirectUrl = '/?access=' . $accessKey . '#/login?verify=' . $code . '&redirect=' . $redirectTarget;
+                    // No access parameter for anti-fingerprinting
+                    $redirectUrl = '/#/login?verify=' . $code . '&redirect=' . $redirectTarget;
                 }
 
                 // Build clean URL without preserving current query parameters
@@ -168,9 +167,7 @@ class OAuthController extends Controller
             $redirectUrl = '/' . $securePath . '#/login?oauth_error=' . urlencode($message);
         } else {
             // Redirect to regular login with error
-            // Add access parameter for anti-fingerprinting
-            $accessKey = substr(md5(config('app.key')), 0, 8);
-            $redirectUrl = '/?access=' . $accessKey . '#/login?oauth_error=' . urlencode($message);
+            $redirectUrl = '/#/login?oauth_error=' . urlencode($message);
         }
 
         // Build clean URL without preserving current query parameters
