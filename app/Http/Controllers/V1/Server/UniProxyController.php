@@ -83,16 +83,20 @@ class UniProxyController extends Controller
         $error = $this->initializeNode($request);
         if ($error) return $error;
 
-        $data = $request->json()->all();
-        if (empty($data)) {
-            $data = $_POST;
+        $payload = $request->json()->all();
+        if (empty($payload)) {
+            $payload = $_POST;
         }
-        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+        if ($payload === null && json_last_error() !== JSON_ERROR_NONE) {
             // JSON decoding error
             return response([
                 'error' => 'Invalid traffic data'
             ], 400);
         }
+
+        $data = $payload['data'] ?? $payload;
+        unset($data['authenticated'], $data['node_type'], $data['node_id'], $data['token']);
+
         Cache::put(CacheKey::get('SERVER_' . strtoupper($this->nodeType) . '_ONLINE_USER', $this->nodeInfo->id), count($data), 3600);
         Cache::put(CacheKey::get('SERVER_' . strtoupper($this->nodeType) . '_LAST_PUSH_AT', $this->nodeInfo->id), time(), 3600);
         $userService = new UserService();

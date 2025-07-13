@@ -184,9 +184,19 @@ class UserService
 
     public function trafficFetch(array $server, string $protocol, array $data)
     {
-        TrafficFetchJob::dispatch($data, $server, $protocol);
-        StatUserJob::dispatch($data, $server, $protocol, 'd');
-        StatServerJob::dispatch($data, $server, $protocol, 'd');
+        $cleanData = [];
+        foreach ($data as $userId => $traffic) {
+            if (is_numeric($userId) && is_array($traffic) && isset($traffic[0]) && isset($traffic[1])) {
+                $cleanData[$userId] = [$traffic[0], $traffic[1]];
+            }
+        }
+        if (empty($cleanData)) {
+            return;
+        }
+
+        TrafficFetchJob::dispatch($cleanData, $server, $protocol);
+        StatUserJob::dispatch($cleanData, $server, $protocol, 'd');
+        StatServerJob::dispatch($cleanData, $server, $protocol, 'd');
     }
 
     public static function getMaxId()

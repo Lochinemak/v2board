@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class StatisticalService {
+    const CACHE_TTL = 86400; // keep traffic data for 24 hours
     protected $userStats;
     protected $startAt;
     protected $endAt;
@@ -79,8 +80,8 @@ class StatisticalService {
             ->where('created_at', '<', $endAt)
             ->whereNotNull('invite_user_id')
             ->count();
-        $data['transfer_used_total'] = StatServer::where('created_at', '>=', $startAt)
-                ->where('created_at', '<', $endAt)
+        $data['transfer_used_total'] = StatServer::where('record_at', '>=', $startAt)
+                ->where('record_at', '<', $endAt)
                 ->select(DB::raw('SUM(u) + SUM(d) as total'))
                 ->value('total') ?? 0;
         return $data;
@@ -95,7 +96,7 @@ class StatisticalService {
         } else {
             $this->serverStats[$serverType][$serverId] = [$u, $d];
         }
-        Cache::put("stat_server_{$this->startAt}", json_encode($this->serverStats), 6000);
+        Cache::put("stat_server_{$this->startAt}", json_encode($this->serverStats), self::CACHE_TTL);
     }
 
     public function statUser($rate, $userId, $u, $d)
@@ -107,7 +108,7 @@ class StatisticalService {
         } else {
             $this->userStats[$rate][$userId] = [$u, $d];
         }
-        Cache::put("stat_user_{$this->startAt}", json_encode($this->userStats), 6000);
+        Cache::put("stat_user_{$this->startAt}", json_encode($this->userStats), self::CACHE_TTL);
     }
 
     public function getStatUserByUserID($userId): array
